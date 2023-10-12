@@ -116,10 +116,9 @@ jobs:
       # Your job code here
       - run:
           name: scan frontend
-          command:
+          command: |
             cd frontend
             npm install
-            ## npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
 
 
@@ -136,10 +135,9 @@ jobs:
       # Your job code here
       - run:
           name: scan backend
-          command:
+          command: |
             cd backend
             npm install
-            ## npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
 
 #   deploy-infrastructure:
