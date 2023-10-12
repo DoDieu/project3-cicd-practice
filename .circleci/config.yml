@@ -76,14 +76,14 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-        keys: [test-frontend]
+          keys: [test-frontend]
       # Your job code here
       - run:
-        name: test frontend
-        command: |
-          cd frontend
-          npm install
-          npm run test
+          name: test frontend
+          command: |
+            cd frontend
+            npm install
+            npm run test
                 
   test-backend:
     docker:
@@ -94,14 +94,14 @@ jobs:
       - checkout
       # Restore from cache
       - restore cache:
-        keys: [test-backend]
+          keys: [test-backend]
       # Your job code here
       - run:
-        name: test backend
-        command:
-          cd backend
-          npm install
-          npm run test
+          name: test backend
+          command:
+            cd backend
+            npm install
+            npm run test
             
 #   scan-frontend:
 #     docker:
