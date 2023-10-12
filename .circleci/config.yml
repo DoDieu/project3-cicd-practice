@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@4.12.5
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -35,12 +38,15 @@ commands:
 jobs:
   run-tests:
     docker:
-      - image: cimg/base:2020.01
+      - image: cimg/base:stable
     steps:
       - checkout
       - run:
           name: "echo test show environment variables from context"
           command: echo $SLACK_DEFAULT_CHANNEL
+      - slack/notify:
+          event: always
+          template: success_tagged_deploy_1
 
   build-frontend:
     docker:
