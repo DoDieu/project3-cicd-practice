@@ -36,17 +36,17 @@ commands:
             fi
             
 jobs:
-  run-tests:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: "echo test show environment variables from context"
-          command: echo $SLACK_DEFAULT_CHANNEL
-      - slack/notify:
-          event: always
-          template: success_tagged_deploy_1
+  # run-tests:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: "echo test show environment variables from context"
+  #         command: echo $SLACK_DEFAULT_CHANNEL
+  #     - slack/notify:
+  #         event: always
+  #         template: success_tagged_deploy_1
 
   build-frontend:
     docker:
@@ -64,6 +64,9 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - slack/notify:
+          event: always
+          template: basic_fail_1
 
   build-backend:
     docker:
@@ -328,9 +331,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - run-tests:
-          context:
-            - slack-notify
+      # - run-tests:
+      #     context:
+      #       - slack-notify
       - build-frontend
       - build-backend
       - test-frontend:
