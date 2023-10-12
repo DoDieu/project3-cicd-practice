@@ -33,6 +33,15 @@ commands:
             fi
             
 jobs:
+  run-tests:
+    docker:
+      - image: circleci/node13.8.0
+    steps:
+      - checkout
+      - run:
+          name: "echo test show environment variables from context"
+          command: echo $SLACK_DEFAULT_CHANNEL
+
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -313,6 +322,9 @@ jobs:
 workflows:
   default:
     jobs:
+      - run-tests:
+          context:
+            - slack-notify
       - build-frontend
       - build-backend
       - test-frontend:
