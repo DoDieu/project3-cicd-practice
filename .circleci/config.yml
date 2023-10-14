@@ -239,9 +239,11 @@ jobs:
     docker:
       # Docker image here that supports NodeJS
       - image: python:3.7-alpine
+
     steps:
       # Checkout code from git
       - checkout
+
       - run:
           name: Install dependencies
           command: |
@@ -264,6 +266,7 @@ jobs:
             then
               curl https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+
      # Here's where you will add some code to rollback on failure 
      - destroy-environment      
 
