@@ -28,11 +28,11 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/migration_${CIRCLE_WORKFLOW_ID:0:7});
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt  \
-            then  \
-              cd ~/project/backend;  \
-              npm install;  \
-              npm run migrations:revert  \
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              cd ~/project/backend;
+              npm install
+              npm run migrations:revert
             fi
             
 jobs:
