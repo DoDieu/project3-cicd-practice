@@ -275,8 +275,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip aws-cli curl
-            apk add --update --no-cache nodejs=16.16.0-r0 npm
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
 
       - run:
           name: Get backend url
