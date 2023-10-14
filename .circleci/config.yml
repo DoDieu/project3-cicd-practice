@@ -27,7 +27,7 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/migration_${CIRCLE_WORKFLOW_ID:0:7});
+            SUCCESS=$(curl --insecure https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/);
             echo $SUCCESS;
             if(( $SUCCESS==1 )); 
             then
