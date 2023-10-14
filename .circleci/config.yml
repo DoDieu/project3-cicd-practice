@@ -7,7 +7,9 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      # Add parameter here
+      workflow_id:
+        type: string   
     steps:
       - run:
           name: Destroy environments
@@ -19,17 +21,22 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      # Add parameter here
+      workflow_id:
+        type: string     
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
           when: on_fail
           command: |
-            cd ~/project/backend
-            npm install
-            npm build
-            npm run migrations:revert
+            SUCCESS=$(curl --insecure https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/migration_<< parameters.workflow_id >>)
+            if(($SUCCESS == 1));
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+            fi
             
 jobs:
   # run-tests:
@@ -376,7 +383,7 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
+              return 1
             else
               return 1
             fi
