@@ -293,6 +293,7 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm install @types/react @types/react-dom --save-dev
             export NODE_OPTIONS=--openssl-legacy-provider
             npm update
             npm run build
