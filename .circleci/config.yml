@@ -24,16 +24,12 @@ commands:
       - run:
           name: Revert migrations
           # Add when this will run
+          when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS==1 )); 
-            then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
-            fi
+            cd ~/project/backend
+            npm install
+            npm build
+            npm run migrations:revert
             
 jobs:
   # run-tests:
@@ -257,6 +253,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix --audit-level=critical --force
             npm run migrations > migrations_dump.txt 
 
       - run:
@@ -269,43 +266,57 @@ jobs:
      # Here's where you will add some code to rollback on failure 
       - destroy-environment      
 
-#   deploy-frontend:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Get backend url
-#           command: |
-#             # your code here
-#             export API_URL="http://${BACKEND_IP}:3030"
-#             echo "${API_URL}"
-#       - run:
-#           name: Deploy frontend objects
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure      
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output test)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment
+      - revert-migrations      
                     
-#   deploy-backend:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Deploy backend
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
+  # deploy-backend:
+  #   docker:
+  #     # Docker image here that supports Ansible
+  #   steps:
+  #     # Checkout code from git
+  #     # Add ssh keys with fingerprint
+  #     # attach workspace
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # your code here
+  #     - run:
+  #         name: Deploy backend
+  #         command: |
+  #           # your code here
+  #     # Here's where you will add some code to rollback on failure  
 
 #   smoke-test:
 #     docker:
@@ -390,8 +401,8 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
       # - deploy-backend:
       #     requires: [run-migrations]
       # - smoke-test:
