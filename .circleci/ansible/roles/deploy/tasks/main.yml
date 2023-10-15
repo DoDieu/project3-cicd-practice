@@ -1,34 +1,33 @@
 ---
 
-- name: "Ship tar file to ec2 instance and extract it"
-  unarchive:
-    src: /root/project/artifact.tar.gz
-    dest: ~/
+- name: "Update apt packages"
+  become: true
+  apt:
+    update_cache: yes
 
-- name: "Install backend server's package."
+- name: "Remove dependencies that are no longer required"
+  become: true
+  apt:
+    autoremove: yes
+
+
+# - name: "Install npm and nodejs"
+#   become: true
+#   apt:
+#     name: ["npm", "nodejs"]
+#     state: latest
+#     update_cache: yes
+
+- name: install node
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && sudo apt-get install -y nodejs
+
+- name: "Install pm2"
+  become: true
   npm:
-    path: ~/
+    name: pm2
+    global: yes
+    production: yes
+    state: present
 
-- name: "Stop currently running app"
-  ignore_errors: true
-  shell: |
-    pm2 stop server
-
-- name: "Start the app"
-  shell: |
-    pm2 start npm -- start --name server
-
-- name: "Check env TYPEORM_ENTITIES"
-  command: 'echo $TYPEFORM_ENTITES'
-  register: output1
-
-- name: "Check env TYPEORM_CONNECTION"
-  command: 'echo $TYPEFORM_CONNECTION'
-  register: output2
-
-- name: "Debug"
-  debug:
-    msg:
-      - "{{ output1.stdout }}"
-      - "{{ output2.stdout }}"
-
+ 
