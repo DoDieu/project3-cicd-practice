@@ -36,17 +36,17 @@ commands:
             fi
             
 jobs:
-  # run-tests:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: "echo test show environment variables from context"
-  #         command: echo $SLACK_DEFAULT_CHANNEL
-  #     - slack/notify:
-  #         event: always
-  #         template: success_tagged_deploy_1
+  run-tests:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: "echo test show environment variables from context"
+          command: echo $SLACK_DEFAULT_CHANNEL
+      - slack/notify:
+          event: always
+          template: success_tagged_deploy_1
 
   build-frontend:
     docker:
@@ -221,7 +221,7 @@ jobs:
           fingerprints: ["1c:c7:69:4b:2b:10:77:13:0a:1f:4b:fa:80:18:06:27"] 
       # attach workspace
       - attach_workspace:
-          at: .circleci/ansible/
+          at: ~/
 
       - run:
           name: Install dependencies
@@ -322,7 +322,7 @@ jobs:
           fingerprints: ["1c:c7:69:4b:2b:10:77:13:0a:1f:4b:fa:80:18:06:27"]
       # attach workspace
       - attach_workspace:
-          at: .circleci/ansible/
+          at: ~/
 
       - run:
           name: Install dependencies
@@ -366,7 +366,7 @@ jobs:
       #       export BACKEND_IP=$(aws ec2 describe-instances \
       #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
       #         --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #         --output test)
+      #         --output text)
       #       export API_URL="http://${BACKEND_IP}:3030"
       #       echo "${API_URL}"
       #       if curl "${API_URL}/api/status" | grep "ok"
@@ -446,9 +446,9 @@ jobs:
 workflows:
   default:
     jobs:
-      # - run-tests:
-      #     context:
-      #       - slack-notify
+      - run-tests:
+          context:
+            - slack-notify
       - build-frontend
       - build-backend
       - test-frontend:
