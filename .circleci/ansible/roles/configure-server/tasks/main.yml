@@ -1,35 +1,26 @@
 ---
-- name: "Update packages."
+
+- name: "Update apt packages"
   become: true
   apt:
-    force_apt_get: yes
-    update_cache : true
-
-- name: Install nodejs prerequisites
-  apt:
-    name:
-      - apt-transport-https
-      - gcc
-      - g++
-      - make
-    state: present
-
-- name: Add nodejs apt key
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
-
-- name: Add nodejs version 13 repository
-  apt_repository:
-    repo: deb https://deb.nodesource.com/node_13.x {{ ansible_distribution_release }} main
-    state: present
     update_cache: yes
 
-- name: "Install nodejs"
+- name: "Remove dependencies that are no longer required"
   become: true
   apt:
-    name: "nodejs"
-    state: present
+    autoremove: yes
+
+# - name: "Install npm and nodejs"
+#   become: true
+#   apt:
+#     name: ["npm", "nodejs"]
+#     state: latest
+#     update_cache: yes
+
+ 
+- name: install node
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && sudo apt-get install -y nodejs
 
 - name: "Install pm2"
   become: true
@@ -38,3 +29,5 @@
     global: yes
     production: yes
     state: present
+
+ 
