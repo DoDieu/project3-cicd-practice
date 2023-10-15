@@ -231,7 +231,7 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: 
-            - "1c:c7:69:4b:2b:10:77:13:0a:1f:4b:fa:80:18:06:27"
+            - "44:1a:32:d6:c8:06:ae:a7:eb:85:5d:9b:09:8b:2f:a2"
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -339,7 +339,6 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
             cd frontend
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
             export NVM_DIR="$HOME/.nvm"
@@ -363,7 +362,7 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: 
-            - "1c:c7:69:4b:2b:10:77:13:0a:1f:4b:fa:80:18:06:27"
+            - "44:1a:32:d6:c8:06:ae:a7:eb:85:5d:9b:09:8b:2f:a2"
       # attach workspace
       - attach_workspace:
           at: ~/
