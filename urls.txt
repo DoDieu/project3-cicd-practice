@@ -1,0 +1,8 @@
+1- git URL
+    https://github.com/DoDieu/project3-cicd-practice.git
+
+2- App URL
+    http://udapeople-7e25a16.s3-website-us-east-1.amazonaws.com/#/employees
+
+3-  Screenshot file
+    evidences
