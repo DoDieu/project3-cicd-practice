@@ -71,7 +71,6 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/Wodj2eeR3h2CnctJYZkm8E/migration_<< parameters.id >>)
-            echo $SUCCESS
             if [[ "$SUCCESS" == "1" ]]
             then
               pwd
@@ -412,7 +411,7 @@ jobs:
             echo $URL
             if curl ${URL} | grep "Welcome"
             then
-              exit 1
+              exit 11
             else
               exit 1
             fi
